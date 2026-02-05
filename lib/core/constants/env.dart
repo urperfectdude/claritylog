@@ -1,25 +1,13 @@
-import 'package:envied/envied.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-part 'env.g.dart';
-
-@Envied(path: '.env')
-abstract class Env {
-  @EnviedField(varName: 'SUPABASE_URL')
-  static const String supabaseUrl = _Env.supabaseUrl;
-
-  @EnviedField(varName: 'SUPABASE_ANON_KEY')
-  static const String supabaseAnonKey = _Env.supabaseAnonKey;
-
-  @EnviedField(varName: 'OPENAI_API_KEY', obfuscate: true)
-  static final String openaiApiKey = _Env.openaiApiKey;
-
-  @EnviedField(varName: 'ELEVENLABS_API_KEY', obfuscate: true)
-  static final String elevenlabsApiKey = _Env.elevenlabsApiKey;
-
-  @EnviedField(varName: 'ELEVENLABS_VOICE_ID')
-  static const String elevenlabsVoiceId = _Env.elevenlabsVoiceId;
-
-  @EnviedField(varName: 'ELEVENLABS_AGENT_ID')
-  static const String elevenlabsAgentId = _Env.elevenlabsAgentId;
+/// Environment configuration using flutter_dotenv
+class Env {
+  static String get supabaseUrl => dotenv.env['SUPABASE_URL'] ?? '';
+  static String get supabaseAnonKey => dotenv.env['SUPABASE_ANON_KEY'] ?? '';
+  static String get openaiApiKey => dotenv.env['OPENAI_API_KEY'] ?? '';
+  static String get elevenlabsApiKey => dotenv.env['ELEVENLABS_API_KEY'] ?? '';
+  static String get elevenlabsVoiceId => dotenv.env['ELEVENLABS_VOICE_ID'] ?? '';
+  static String get elevenlabsAgentId => dotenv.env['ELEVENLABS_AGENT_ID'] ?? '';
 }
+
 

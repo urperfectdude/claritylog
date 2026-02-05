@@ -199,6 +199,13 @@ class SettingsPage extends StatelessWidget {
     );
   }
 }
-
-// Export ProfilePage from the settings folder
-export '../pages/settings/profile_page.dart';
+class ProfilePage extends StatelessWidget {
+  const ProfilePage({super.key});
+  
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(child: Text('Profile - Coming Soon')),
+    );
+  }
+}
