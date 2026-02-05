@@ -225,45 +225,6 @@ graph LR
 
 ---
 
-## Project Structure
-
-```
-lib/
-├── main.dart
-├── core/
-│   ├── constants/       # App constants, environment config
-│   ├── theme/           # Dark theme configuration
-│   ├── utils/           # Utilities (network, hive, supabase)
-│   └── extensions/      # Dart extensions
-├── data/
-│   ├── models/          # Data models (Journal, Goal, UserProfile)
-│   └── repositories/    # Repository implementations
-├── presentation/
-│   ├── providers/       # Riverpod providers
-│   ├── pages/           # Screens (auth, home, journal, goals)
-│   ├── widgets/         # Reusable UI components
-│   └── router/          # GoRouter configuration
-└── services/
-    ├── audio_service.dart    # Voice recording
-    └── sync_service.dart     # Offline sync queue
-```
-
----
-
-## Environment Variables
-
-| Variable | Description |
-|----------|-------------|
-| `SUPABASE_URL` | Your Supabase project URL |
-| `SUPABASE_ANON_KEY` | Supabase anonymous key |
-| `OPENAI_API_KEY` | OpenAI API key for GPT and Whisper |
-| `ELEVENLABS_API_KEY` | ElevenLabs API key |
-| `ELEVENLABS_VOICE_ID` | Preferred voice for TTS |
-| `ELEVENLABS_AGENT_ID` | ElevenLabs Agent ID for calls |
-| `FIREBASE_PROJECT_ID` | Firebase project for push notifications |
-
----
-
 ## Escalation Levels
 
 | Level | Action | Timing |
@@ -272,10 +233,4 @@ lib/
 | 1 | Push notification | At reminder time |
 | 2 | Push + In-app reminder | +2 hours after missed |
 | 3 | AI phone call | +6 hours or next day AM |
-
----
-
-## License
-
-MIT License
 
