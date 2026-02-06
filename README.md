@@ -181,50 +181,6 @@ graph LR
 
 ---
 
-## Getting Started
-
-### Prerequisites
-
-- Flutter SDK ^3.5.0
-- Dart SDK ^3.5.0
-
-### Installation
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/urperfectdude/claritylog.git
-   cd claritylog
-   ```
-
-2. Copy environment variables:
-   ```bash
-   cp .env.example .env
-   ```
-
-3. Fill in your API keys in `.env`:
-   - Supabase URL and Anon Key
-   - OpenAI API Key
-   - ElevenLabs API Key, Voice ID, and Agent ID
-   - Firebase Project ID
-   - LinkedIn/Twitter credentials (optional)
-
-4. Install dependencies:
-   ```bash
-   flutter pub get
-   ```
-
-5. Run code generation:
-   ```bash
-   flutter pub run build_runner build --delete-conflicting-outputs
-   ```
-
-6. Run the app:
-   ```bash
-   flutter run
-   ```
-
----
-
 ## Escalation Levels
 
 | Level | Action | Timing |
