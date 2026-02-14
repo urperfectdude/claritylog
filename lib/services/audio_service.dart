@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../core/utils/app_utils.dart';
 
 /// Service for audio recording (voice journals)
 class AudioService {
@@ -88,6 +90,8 @@ class AudioService {
 
 /// Service for managing audio file uploads
 class AudioUploadService {
+  static final _supabase = SupabaseConfig.client;
+
   /// Upload audio file to Supabase storage
   static Future<String?> uploadAudio({
     required String filePath,
@@ -99,13 +103,18 @@ class AudioUploadService {
       if (!await file.exists()) return null;
 
       final bytes = await file.readAsBytes();
-      final fileName = 'journals/$userId/$journalId.m4a';
+      final storagePath = '$userId/$journalId.m4a';
 
-      // This would upload to Supabase Storage
-      // For now, return the expected URL format
-      // Actual implementation requires SupabaseConfig.client.storage
+      await _supabase.storage
+          .from('audio-recordings')
+          .uploadBinary(storagePath, bytes,
+              fileOptions: const FileOptions(
+                contentType: 'audio/m4a',
+                upsert: true,
+              ));
 
-      return fileName;
+      // Return the storage path for later retrieval
+      return storagePath;
     } catch (e) {
       return null;
     }
@@ -114,9 +123,10 @@ class AudioUploadService {
   /// Get signed URL for audio playback
   static Future<String?> getAudioUrl(String path) async {
     try {
-      // This would get signed URL from Supabase Storage
-      // Actual implementation requires SupabaseConfig.client.storage
-      return path;
+      final url = await _supabase.storage
+          .from('audio-recordings')
+          .createSignedUrl(path, 3600); // 1 hour expiry
+      return url;
     } catch (e) {
       return null;
     }
@@ -125,8 +135,7 @@ class AudioUploadService {
   /// Delete audio file from storage
   static Future<void> deleteAudio(String path) async {
     try {
-      // This would delete from Supabase Storage
-      // Actual implementation requires SupabaseConfig.client.storage
+      await _supabase.storage.from('audio-recordings').remove([path]);
     } catch (e) {
       // Log error
     }

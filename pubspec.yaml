@@ -1,6 +1,6 @@
 name: clarity_log
 description: ClarityLog - AI-powered productivity app with journaling, goal tracking, and smart reminders.
-publish_to: 'none'
+publish_to: "none"
 version: 1.0.0+1
 
 environment:
@@ -17,6 +17,7 @@ dependencies:
   supabase_flutter: ^2.8.0
 
   # Local Storage & Offline
+  hive: ^2.2.3
   hive_flutter: ^1.1.0
   connectivity_plus: ^6.1.0
   path_provider: ^2.1.5

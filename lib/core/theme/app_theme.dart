@@ -26,6 +26,8 @@ class AppTheme {
 
   static const Color divider = Color(0xFF2A2A2A);
   static const Color disabled = Color(0xFF404040);
+  static const Color border = Color(0xFF2A2A2A); // Added missing border color
+  static const Color accent = Color(0xFFFF4081); // Added missing accent color
 
   // Mood colors for journal
   static const Color moodExcellent = Color(0xFF4CAF50);
@@ -86,7 +88,8 @@ class AppTheme {
       ),
 
       // Card
-      cardTheme: CardTheme(
+      // Card
+      cardTheme: CardThemeData(
         color: card,
         elevation: 0,
         shape: RoundedRectangleBorder(
@@ -208,7 +211,7 @@ class AppTheme {
       ),
 
       // Dialog
-      dialogTheme: DialogTheme(
+      dialogTheme: DialogThemeData(
         backgroundColor: surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radiusLg),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../data/models/user_profile.dart';
 import '../../providers/auth/auth_provider.dart';
 
 class ProfilePage extends ConsumerStatefulWidget {
@@ -81,17 +81,20 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   }
 
   Future<void> _saveProfile() async {
-    await ref.read(authProvider.notifier).updateProfile(
-          displayName: _displayNameController.text.trim().isEmpty
-              ? null
-              : _displayNameController.text.trim(),
-          defaultQuietHoursStart: _quietHoursStart != null
-              ? _formatTimeOfDay(_quietHoursStart!)
-              : null,
-          defaultQuietHoursEnd: _quietHoursEnd != null
-              ? _formatTimeOfDay(_quietHoursEnd!)
-              : null,
-        );
+    final profile = ref.read(currentProfileProvider);
+    if (profile != null) {
+      final updatedProfile = profile.copyWith(
+        displayName: _displayNameController.text.trim().isEmpty
+            ? null
+            : _displayNameController.text.trim(),
+        defaultQuietHoursStart: _quietHoursStart != null
+            ? _formatTimeOfDay(_quietHoursStart!)
+            : null,
+        defaultQuietHoursEnd:
+            _quietHoursEnd != null ? _formatTimeOfDay(_quietHoursEnd!) : null,
+      );
+      await ref.read(authProvider.notifier).updateProfile(updatedProfile);
+    }
 
     if (mounted) {
       setState(() {
@@ -180,7 +183,8 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   contentPadding: EdgeInsets.zero,
                   leading: const Icon(Icons.email_outlined),
                   title: const Text('Email'),
-                  subtitle: Text(profile.email ?? 'Not set'),
+                  subtitle:
+                      Text(profile.email.isEmpty ? 'Not set' : profile.email),
                 ),
 
                 const Divider(),
@@ -215,9 +219,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                         ? '${_quietHoursStart!.format(context)} - ${_quietHoursEnd!.format(context)}'
                         : 'Not set (AI calls allowed anytime)',
                   ),
-                  trailing: _isEditing
-                      ? const Icon(Icons.chevron_right)
-                      : null,
+                  trailing: _isEditing ? const Icon(Icons.chevron_right) : null,
                   onTap: _isEditing ? _selectQuietHours : null,
                 ),
 
@@ -229,9 +231,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   leading: const Icon(Icons.record_voice_over_outlined),
                   title: const Text('Preferred AI Voice'),
                   subtitle: Text(profile.preferredVoice ?? 'Default'),
-                  trailing: _isEditing
-                      ? const Icon(Icons.chevron_right)
-                      : null,
+                  trailing: _isEditing ? const Icon(Icons.chevron_right) : null,
                   onTap: _isEditing
                       ? () {
                           // TODO: Voice selection
@@ -250,11 +250,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   onChanged: _isEditing
                       ? (value) {
                           ref.read(authProvider.notifier).updateProfile(
-                                notificationsEnabled: value,
+                                profile.copyWith(notificationsEnabled: value),
                               );
                         }
                       : null,
-                  activeColor: AppTheme.secondary,
+                  activeThumbColor: AppTheme.secondary,
                 ),
 
                 // AI Calls enabled
@@ -267,11 +267,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   onChanged: _isEditing
                       ? (value) {
                           ref.read(authProvider.notifier).updateProfile(
-                                aiCallsEnabled: value,
+                                profile.copyWith(aiCallsEnabled: value),
                               );
                         }
                       : null,
-                  activeColor: AppTheme.secondary,
+                  activeThumbColor: AppTheme.secondary,
                 ),
 
                 const SizedBox(height: AppTheme.spacingXl),
@@ -300,10 +300,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                         ),
                         const Divider(),
                       ],
-                      if (profile.aiCommunicationStyle != null) ...[
+                      if (profile.aiCommunicationStyle.isNotEmpty) ...[
                         _InsightRow(
                           label: 'Communication Style',
-                          value: profile.aiCommunicationStyle!,
+                          value: profile.aiCommunicationStyle,
                         ),
                         const Divider(),
                       ],
@@ -314,7 +314,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                         ),
                       ],
                       if (profile.aiPersonalitySummary == null &&
-                          profile.aiCommunicationStyle == null &&
+                          profile.aiCommunicationStyle.isEmpty &&
                           profile.aiProductivityPatterns == null)
                         Center(
                           child: Padding(
@@ -329,7 +329,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                 const SizedBox(height: AppTheme.spacingSm),
                                 Text(
                                   'Journal more to unlock AI insights',
-                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(
                                         color: AppTheme.textSecondary,
                                       ),
                                   textAlign: TextAlign.center,

@@ -7,7 +7,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/app_utils.dart';
 import '../../../services/audio_service.dart';
 import '../../providers/journal/journal_provider.dart';
-import '../../widgets/common/stat_card.dart';
+import '../../widgets/ai_offline_dialog.dart';
 
 class JournalCreatePage extends ConsumerStatefulWidget {
   const JournalCreatePage({super.key});
@@ -55,9 +55,11 @@ class _JournalCreatePageState extends ConsumerState<JournalCreatePage> {
       // Haptic feedback
       HapticFeedback.mediumImpact();
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to start recording: $e')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to start recording: $e')),
+        );
+      }
     }
   }
 
@@ -81,6 +83,8 @@ class _JournalCreatePageState extends ConsumerState<JournalCreatePage> {
     final isOnline = await NetworkUtils.isOnline;
 
     if (!isOnline) {
+      if (!mounted) return;
+
       // Show offline AI dialog
       final useOffline = await showDialog<bool>(
         context: context,
@@ -105,16 +109,19 @@ class _JournalCreatePageState extends ConsumerState<JournalCreatePage> {
       await Future.delayed(const Duration(seconds: 2));
 
       setState(() {
-        _contentController.text = 'Voice transcription will appear here after connecting to OpenAI Whisper API.';
+        _contentController.text =
+            'Voice transcription will appear here after connecting to OpenAI Whisper API.';
         _isTranscribing = false;
       });
     } catch (e) {
       setState(() {
         _isTranscribing = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Transcription failed: $e')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Transcription failed: $e')),
+        );
+      }
     }
   }
 
@@ -132,11 +139,14 @@ class _JournalCreatePageState extends ConsumerState<JournalCreatePage> {
     });
 
     try {
-      await ref.read(journalListProvider.notifier).createJournal(
-            content: content,
-            audioUrl: _recordedAudioPath,
-            isVoice: _recordedAudioPath != null,
-          );
+      if (_recordedAudioPath != null) {
+        await ref.read(journalProvider.notifier).createVoiceJournal(
+              content,
+              _recordedAudioPath!,
+            );
+      } else {
+        await ref.read(journalProvider.notifier).createTextJournal(content);
+      }
 
       if (mounted) {
         context.pop();
@@ -151,9 +161,11 @@ class _JournalCreatePageState extends ConsumerState<JournalCreatePage> {
       setState(() {
         _isSaving = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to save: $e')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save: $e')),
+        );
+      }
     }
   }
 
@@ -254,7 +266,8 @@ class _JournalCreatePageState extends ConsumerState<JournalCreatePage> {
             padding: EdgeInsets.only(
               left: AppTheme.spacingLg,
               right: AppTheme.spacingLg,
-              bottom: MediaQuery.of(context).padding.bottom + AppTheme.spacingMd,
+              bottom:
+                  MediaQuery.of(context).padding.bottom + AppTheme.spacingMd,
               top: AppTheme.spacingMd,
             ),
             decoration: BoxDecoration(
@@ -289,7 +302,7 @@ class _JournalCreatePageState extends ConsumerState<JournalCreatePage> {
                       boxShadow: _isRecording
                           ? [
                               BoxShadow(
-                                color: AppTheme.error.withOpacity(0.4),
+                                color: AppTheme.error.withValues(alpha: 0.4),
                                 blurRadius: 20,
                                 spreadRadius: 2,
                               ),

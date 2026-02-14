@@ -20,9 +20,11 @@ class AppConstants {
   static const int syncItemTypeId = 3;
 
   // API Endpoints (Edge Functions)
-  static const String transcribeAudioEndpoint = '/functions/v1/transcribe-audio';
+  static const String transcribeAudioEndpoint =
+      '/functions/v1/transcribe-audio';
   static const String analyzeJournalEndpoint = '/functions/v1/analyze-journal';
-  static const String generateContentEndpoint = '/functions/v1/generate-social-content';
+  static const String generateContentEndpoint =
+      '/functions/v1/generate-social-content';
   static const String aiCallerEndpoint = '/functions/v1/ai-caller';
 
   // Default Values
@@ -53,6 +55,8 @@ enum EscalationLevel {
       orElse: () => EscalationLevel.pushOnly,
     );
   }
+
+  String get displayName => description;
 }
 
 /// Goal categories
@@ -70,6 +74,8 @@ enum GoalCategory {
   final String emoji;
 
   const GoalCategory(this.label, this.emoji);
+
+  String get displayName => '$emoji $label';
 }
 
 /// Reminder frequency options
@@ -77,9 +83,12 @@ enum ReminderFrequency {
   daily('Daily'),
   weekdays('Weekdays only'),
   weekly('Weekly'),
-  custom('Custom');
+  custom('Custom'),
+  none('No reminders');
 
   final String label;
 
   const ReminderFrequency(this.label);
+
+  String get displayName => label;
 }
